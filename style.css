@@ -1,0 +1,17 @@
+body {
+    margin: 2vw 5vw;
+    font-size: large;
+}
+.completed {
+    text-decoration: line-through;
+}
+ul {
+    list-style-type: none;
+}
+li {
+    max-width: 25rem;
+    min-width: 12rem;
+    border: 1px solid black;
+    display: flex;
+    justify-content: space-between;
+}
