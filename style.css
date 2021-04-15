@@ -1,23 +1,16 @@
 body {
   margin: 2vw 5vw;
-  font-size: large;
-  background-color: darkgray;
 }
 
 .completed {
   text-decoration: line-through;
 }
 
-ul {
-  list-style-type: none;
+thead {
+  font-size: large;
 }
-
-li {
-  max-width: 25rem;
-  min-width: 12rem;
-  border: 1px solid black;
-  display: flex;
-  justify-content: space-between;
+td {
+  padding: 0 1rem;
 }
 
 .hide {

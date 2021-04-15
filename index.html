@@ -10,12 +10,20 @@
     <h2>Todo App</h2>
 
     <div class="container">
-      <ul id="todoList"></ul>
+      <table>
+        <thead>
+          <tr>
+            <th>Completed</th>
+            <th>Description</th>
+            <th>Due-Date</th>
+            <th>Edit</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody id="todoList"></tbody>
+      </table>
     </div>
     <hr />
-    <p id="doneCount"></p>
-    <p id="unDoneCount"></p>
-
     <div id="editForm" class="hide">
       <input type="text" id="edText" />
       <input type="date" id="edDate" />
@@ -23,8 +31,12 @@
     </div>
 
     <div id="addForm">
-      <input id="todoText" type="text" />
+      <input id="todoText" type="text" placeholder="todo description" />
+      <input type="date" id="date" placeholder="todo due-date" />
       <button id="addT">Add Todo</button>
     </div>
+
+    <p id="doneCount"></p>
+    <p id="unDoneCount"></p>
   </body>
 </html>

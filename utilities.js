@@ -2,12 +2,13 @@ import { Todo } from "./Todos.js";
 import { crossOutTodo, qs } from "./view.js";
 import { getFromLS, saveToLS } from "./LS.js";
 
+//this variable temporarily stores the id of the edited todo
 let _id = 0;
 
 //add new todo
 export function addNewTodo() {
   const newTodo = new Todo();
-  newTodo.todoDate = newTodo.date();
+  newTodo.todoDate = qs("#date").value;
   newTodo.text = qs("#todoText").value;
   newTodo.completed = false;
   let todos = [];
@@ -103,20 +104,20 @@ function deleteTodo(e) {
 export function listTodos() {
   // clear the table
   qs("#todoList").innerHTML = "";
-  // add new li for each Todo item
+  // add new tr for each Todo item
   let todos = [];
   todos = getFromLS("todos");
   todos.forEach((todo) => {
-    let li = document.createElement("li");
+    let tr = document.createElement("tr");
     //create input[type=checkbox] with attributes
     let checkbox = document.createElement("input");
     checkbox.setAttribute("type", "checkbox");
     checkbox.setAttribute("value", todo.id);
     //create span for the todo text
-    let text = document.createElement("span");
+    let text = document.createElement("td");
     text.textContent = todo.text;
     //create span for the todo date
-    let date = document.createElement("span");
+    let date = document.createElement("td");
     date.textContent = todo.todoDate;
     //add event listener for the checkbox and reference inputChecked method on it
     checkbox.addEventListener("click", inputChecked);
@@ -125,22 +126,28 @@ export function listTodos() {
     trashIcon.id = todo.id;
     trashIcon.setAttribute("src", "delete-24px.svg");
     trashIcon.addEventListener("click", deleteTodo);
+    //append it inside its own td
+    let deleteTd = document.createElement("td");
+    deleteTd.appendChild(trashIcon);
     //create img for the edit feature
     let editIcon = document.createElement("img");
     editIcon.id = todo.id;
     editIcon.setAttribute("src", "edit-24px.svg");
     editIcon.addEventListener("click", editTodo);
+    //append it inside its own td
+    let editTd = document.createElement("td");
+    editTd.appendChild(editIcon);
     if (todo.completed) {
       checkbox.checked = true;
       crossOutTodo(text);
     }
     //creating the li element
-    li.appendChild(checkbox);
-    li.appendChild(text);
-    li.appendChild(date);
-    li.appendChild(editIcon);
-    li.appendChild(trashIcon);
-    qs("#todoList").appendChild(li);
+    tr.appendChild(checkbox);
+    tr.appendChild(text);
+    tr.appendChild(date);
+    tr.appendChild(editTd);
+    tr.appendChild(deleteTd);
+    qs("#todoList").appendChild(tr);
   });
   //done and undone texts
   getDoneCount(todos);

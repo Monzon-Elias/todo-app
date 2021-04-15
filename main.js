@@ -18,7 +18,7 @@ qs("#addT").addEventListener("click", () => {
   }
 });
 
-//execute add and display budget items list
+//updateTodo() method
 qs("#save").addEventListener("click", (e) => {
   updateTodo();
 });
