@@ -1,17 +1,35 @@
 body {
-    margin: 2vw 5vw;
-    font-size: large;
+  margin: 2vw 5vw;
+  font-size: large;
+  background-color: darkgray;
 }
+
 .completed {
-    text-decoration: line-through;
+  text-decoration: line-through;
 }
+
 ul {
-    list-style-type: none;
+  list-style-type: none;
 }
+
 li {
-    max-width: 25rem;
-    min-width: 12rem;
-    border: 1px solid black;
-    display: flex;
-    justify-content: space-between;
+  max-width: 25rem;
+  min-width: 12rem;
+  border: 1px solid black;
+  display: flex;
+  justify-content: space-between;
+}
+
+.hide {
+  display: none;
+}
+
+img[src*="del"]:hover {
+  box-shadow: 0px 0px 20px rgb(250, 2, 2);
+  border-radius: 1rem;
+}
+
+img[src*="edi"]:hover {
+  box-shadow: 0px 0px 20px rgb(15, 117, 2);
+  border-radius: 1rem;
 }

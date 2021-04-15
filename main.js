@@ -1,5 +1,5 @@
 import { getFromLS, saveToLS } from "./LS.js";
-import { addNewTodo, listTodos } from "./utilities.js";
+import { addNewTodo, listTodos, updateTodo } from "./utilities.js";
 import { qs, clearInputs } from "./view.js";
 
 let todos = [];
@@ -16,4 +16,9 @@ qs("#addT").addEventListener("click", () => {
     listTodos();
     clearInputs();
   }
+});
+
+//execute add and display budget items list
+qs("#save").addEventListener("click", (e) => {
+  updateTodo();
 });
