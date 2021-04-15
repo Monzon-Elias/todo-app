@@ -19,6 +19,6 @@ qs("#addT").addEventListener("click", () => {
 });
 
 //updateTodo() method
-qs("#save").addEventListener("click", (e) => {
+qs("#save").addEventListener("click", () => {
   updateTodo();
 });

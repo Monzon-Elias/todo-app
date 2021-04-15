@@ -113,10 +113,10 @@ export function listTodos() {
     let checkbox = document.createElement("input");
     checkbox.setAttribute("type", "checkbox");
     checkbox.setAttribute("value", todo.id);
-    //create span for the todo text
+    //create td for the todo text
     let text = document.createElement("td");
     text.textContent = todo.text;
-    //create span for the todo date
+    //create td for the todo date
     let date = document.createElement("td");
     date.textContent = todo.todoDate;
     //add event listener for the checkbox and reference inputChecked method on it
