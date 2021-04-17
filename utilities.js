@@ -4,7 +4,7 @@ import { getFromLS, saveToLS } from "./LS.js";
 
 //this variable temporarily stores the id of the edited todo
 let _id = 0;
-
+let _pending = false;
 //add new todo
 export function addNewTodo() {
   const newTodo = new Todo();
@@ -15,6 +15,9 @@ export function addNewTodo() {
   todos = getFromLS("todos");
   todos.push(newTodo);
   saveToLS("todos", todos);
+  //list the todos
+  todos = getFromLS("todos");
+  listTodos(todos);
 }
 
 function inputChecked(e) {
@@ -23,17 +26,21 @@ function inputChecked(e) {
   // find the todo that was clicked from the todo array
   let todos = [];
   todos = getFromLS("todos");
-  let todo = todos.find((todoItem) => todoItem.id == todoId);
+  let todo = todos.find((todo) => todo.id == todoId);
   // change the completed property to its opposite
   todo.completed = !todo.completed;
   console.log(todo);
   //save to LS
   saveToLS("todos", todos);
   //list the todos
-  listTodos();
+  todos = getFromLS("todos");
+  listTodos(todos);
+  qs("#all").classList.add("fade");
 }
 
-function getDoneCount(todos) {
+function getDoneCount() {
+  let todos = [];
+  todos = getFromLS("todos");
   let done = todos.filter((todoItem) => todoItem.completed == true);
   let unDone = todos.filter((todoItem) => todoItem.completed == false);
   done.length > 1
@@ -46,10 +53,12 @@ function getDoneCount(todos) {
   unDone.length > 1
     ? (qs(
         "#unDoneCount"
-      ).innerHTML = `You have <b>${unDone.length}</b> todos incompleted`)
+      ).innerHTML = `You have <b>${unDone.length}</b> todos pending`)
     : (qs(
         "#unDoneCount"
-      ).innerHTML = `You have <b>${unDone.length}</b> todo incompleted`);
+      ).innerHTML = `You have <b>${unDone.length}</b> todo pending`);
+
+  filtering(done, unDone, todos);
 }
 
 //edit budget item
@@ -83,7 +92,8 @@ export function updateTodo() {
   todos.splice(index, 1, todo);
   //save to LS
   saveToLS("todos", todos);
-  listTodos();
+  todos = getFromLS("todos");
+  listTodos(todos);
   _id = 0;
 }
 
@@ -98,15 +108,42 @@ function deleteTodo(e) {
   //save to LS
   saveToLS("todos", todos);
   //list the todos
-  listTodos();
+  todos = getFromLS("todos");
+  listTodos(todos);
 }
 
-export function listTodos() {
+function filtering(done, unDone, todos) {
+  done.length == todos.length || unDone.length == todos.length
+    ? qs("#all").classList.add("fade")
+    : qs("#all").classList.remove("fade");
+  unDone.length < 1 || done.length < 1
+    ? qs("#completed").classList.add("fade")
+    : qs("#completed").classList.remove("fade");
+  done.length < 1 || unDone.length < 1
+    ? qs("#pending").classList.add("fade")
+    : qs("#pending").classList.remove("fade");
+}
+
+export function pending(todos) {
+  let pending = todos.filter((todo) => todo.completed == false);
+  if (pending.length > 0) {
+    _pending = true;
+    listTodos(pending);
+  }
+}
+
+export function completed(todos) {
+  let completed = todos.filter((todo) => todo.completed == true);
+  if (completed.length > 0) {
+    _pending = true;
+    listTodos(completed);
+  }
+}
+
+export function listTodos(todos) {
   // clear the table
   qs("#todoList").innerHTML = "";
   // add new tr for each Todo item
-  let todos = [];
-  todos = getFromLS("todos");
   todos.forEach((todo) => {
     let tr = document.createElement("tr");
     //create input[type=checkbox] with attributes
@@ -119,6 +156,8 @@ export function listTodos() {
     //create td for the todo date
     let date = document.createElement("td");
     date.textContent = todo.todoDate;
+    //disable the checkbox if pending or completed methods get activated
+    if (_pending) checkbox.disabled = true;
     //add event listener for the checkbox and reference inputChecked method on it
     checkbox.addEventListener("click", inputChecked);
     //create img for the delete feature
@@ -150,5 +189,6 @@ export function listTodos() {
     qs("#todoList").appendChild(tr);
   });
   //done and undone texts
-  getDoneCount(todos);
+  getDoneCount();
+  _pending = false;
 }

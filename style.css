@@ -6,15 +6,29 @@ body {
   text-decoration: line-through;
 }
 
+.hide {
+  display: none;
+}
+.fade {
+  opacity: 0.3;
+}
+.inputAlert {
+  border: 1px solid red;
+}
+#filtering {
+  margin-top: 0.5rem;
+  max-width: fit-content;
+  column-count: 3;
+}
+#filtering button {
+  display: block;
+}
+
 thead {
   font-size: large;
 }
 td {
   padding: 0 1rem;
-}
-
-.hide {
-  display: none;
 }
 
 img[src*="del"]:hover {
