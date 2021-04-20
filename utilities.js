@@ -4,20 +4,21 @@ import { getFromLS, saveToLS } from "./LS.js";
 
 //this variable temporarily stores the id of the edited todo
 let _id = 0;
+let _completed = false;
 let _pending = false;
+
 //add new todo
 export function addNewTodo() {
   const newTodo = new Todo();
   newTodo.todoDate = qs("#date").value;
   newTodo.text = qs("#todoText").value;
   newTodo.completed = false;
+  if (_completed) newTodo.completed = true;
+  _completed = false;
   let todos = [];
   todos = getFromLS("todos");
   todos.push(newTodo);
   saveToLS("todos", todos);
-  //list the todos
-  todos = getFromLS("todos");
-  listTodos(todos);
 }
 
 function inputChecked(e) {
@@ -34,8 +35,16 @@ function inputChecked(e) {
   saveToLS("todos", todos);
   //list the todos
   todos = getFromLS("todos");
-  listTodos(todos);
-  qs("#all").classList.add("fade");
+  if (_pending) {
+    pending(todos);
+  } else if (_completed) {
+    completed(todos);
+  } else {
+    listTodos(todos);
+  }
+  console.log("pending: " + _pending);
+  console.log("completed: " + _completed);
+  qs("#all").disabled = true;
 }
 
 function getDoneCount() {
@@ -46,17 +55,17 @@ function getDoneCount() {
   done.length > 1
     ? (qs(
         "#doneCount"
-      ).innerHTML = `You have <b>${done.length}</b> todos completed`)
+      ).innerHTML = `You have <b>${done.length} completed</b> todos`)
     : (qs(
         "#doneCount"
-      ).innerHTML = `You have <b>${done.length}</b> todo completed`);
+      ).innerHTML = `You have <b>${done.length} completed</b> todo`);
   unDone.length > 1
     ? (qs(
         "#unDoneCount"
-      ).innerHTML = `You have <b>${unDone.length}</b> todos pending`)
+      ).innerHTML = `You have <b>${unDone.length} pending</b> todos`)
     : (qs(
         "#unDoneCount"
-      ).innerHTML = `You have <b>${unDone.length}</b> todo pending`);
+      ).innerHTML = `You have <b>${unDone.length} pending</b> todo`);
 
   filtering(done, unDone, todos);
 }
@@ -65,7 +74,6 @@ function getDoneCount() {
 function editTodo(e) {
   qs("#addForm").classList.add("hide");
   qs("#editForm").classList.remove("hide");
-  //_editMode = true;
   let todoId = e.target.id;
   _id = todoId;
   console.log(todoId);
@@ -92,8 +100,6 @@ export function updateTodo() {
   todos.splice(index, 1, todo);
   //save to LS
   saveToLS("todos", todos);
-  todos = getFromLS("todos");
-  listTodos(todos);
   _id = 0;
 }
 
@@ -109,86 +115,113 @@ function deleteTodo(e) {
   saveToLS("todos", todos);
   //list the todos
   todos = getFromLS("todos");
-  listTodos(todos);
+  if (_pending) {
+    pending(todos);
+  } else if (_completed) {
+    completed(todos);
+  } else {
+    listTodos(todos);
+  }
+  console.log("pending: " + _pending);
+  console.log("completed: " + _completed);
 }
 
 function filtering(done, unDone, todos) {
-  done.length == todos.length || unDone.length == todos.length
-    ? qs("#all").classList.add("fade")
-    : qs("#all").classList.remove("fade");
-  unDone.length < 1 || done.length < 1
-    ? qs("#completed").classList.add("fade")
-    : qs("#completed").classList.remove("fade");
-  done.length < 1 || unDone.length < 1
-    ? qs("#pending").classList.add("fade")
-    : qs("#pending").classList.remove("fade");
+  //'All todos' button
+  if (
+    done.length == todos.length ||
+    unDone.length == todos.length ||
+    todos.length < 1
+  ) {
+    qs("#all").disabled = true;
+    qs("#pending").disabled = true;
+    qs("#completed").disabled = true;
+  } else {
+    qs("#all").disabled = false;
+    qs("#pending").disabled = false;
+    qs("#completed").disabled = false;
+  }
+  if (done.length < 1) qs("#pending").disabled = false;
+
+  if (unDone.length < 1) qs("#completed").disabled = false;
 }
 
 export function pending(todos) {
   let pending = todos.filter((todo) => todo.completed == false);
-  if (pending.length > 0) {
-    _pending = true;
-    listTodos(pending);
-  }
+  _pending = true;
+  _completed = false;
+  listTodos(pending);
 }
 
 export function completed(todos) {
   let completed = todos.filter((todo) => todo.completed == true);
-  if (completed.length > 0) {
-    _pending = true;
-    listTodos(completed);
-  }
+  _completed = true;
+  _pending = false;
+  listTodos(completed);
 }
 
+export function displayAll() {
+  //reset both flags
+  _completed = false;
+  _pending = false;
+  let todos = [];
+  todos = getFromLS("todos");
+  listTodos(todos);
+  qs("#all").disabled = true;
+  qs("#pending").disabled = true;
+  qs("#completed").disabled = true;
+}
 export function listTodos(todos) {
   // clear the table
   qs("#todoList").innerHTML = "";
-  // add new tr for each Todo item
-  todos.forEach((todo) => {
-    let tr = document.createElement("tr");
-    //create input[type=checkbox] with attributes
-    let checkbox = document.createElement("input");
-    checkbox.setAttribute("type", "checkbox");
-    checkbox.setAttribute("value", todo.id);
-    //create td for the todo text
-    let text = document.createElement("td");
-    text.textContent = todo.text;
-    //create td for the todo date
-    let date = document.createElement("td");
-    date.textContent = todo.todoDate;
-    //disable the checkbox if pending or completed methods get activated
-    if (_pending) checkbox.disabled = true;
-    //add event listener for the checkbox and reference inputChecked method on it
-    checkbox.addEventListener("click", inputChecked);
-    //create img for the delete feature
-    let trashIcon = document.createElement("img");
-    trashIcon.id = todo.id;
-    trashIcon.setAttribute("src", "delete-24px.svg");
-    trashIcon.addEventListener("click", deleteTodo);
-    //append it inside its own td
-    let deleteTd = document.createElement("td");
-    deleteTd.appendChild(trashIcon);
-    //create img for the edit feature
-    let editIcon = document.createElement("img");
-    editIcon.id = todo.id;
-    editIcon.setAttribute("src", "edit-24px.svg");
-    editIcon.addEventListener("click", editTodo);
-    //append it inside its own td
-    let editTd = document.createElement("td");
-    editTd.appendChild(editIcon);
-    if (todo.completed) {
-      checkbox.checked = true;
-      crossOutTodo(text);
-    }
-    //creating the li element
-    tr.appendChild(checkbox);
-    tr.appendChild(text);
-    tr.appendChild(date);
-    tr.appendChild(editTd);
-    tr.appendChild(deleteTd);
-    qs("#todoList").appendChild(tr);
-  });
+  if (todos.length < 1) qs("#todoList").innerHTML = "No todos here...";
+  else {
+    // add new tr for each Todo item
+    todos.forEach((todo) => {
+      let tr = document.createElement("tr");
+      //create input[type=checkbox] with attributes
+      let checkbox = document.createElement("input");
+      checkbox.setAttribute("type", "checkbox");
+      checkbox.setAttribute("value", todo.id);
+      //create td for the todo text
+      let text = document.createElement("td");
+      text.textContent = todo.text;
+      //create td for the todo date
+      let date = document.createElement("td");
+      date.textContent = todo.todoDate;
+      //disable the checkbox if pending or completed methods get activated
+      //if (_pending) checkbox.disabled = true;
+      //add event listener for the checkbox and reference inputChecked method on it
+      checkbox.addEventListener("click", inputChecked);
+      //create img for the delete feature
+      let trashIcon = document.createElement("img");
+      trashIcon.id = todo.id;
+      trashIcon.setAttribute("src", "delete-24px.svg");
+      trashIcon.addEventListener("click", deleteTodo);
+      //append it inside its own td
+      let deleteTd = document.createElement("td");
+      deleteTd.appendChild(trashIcon);
+      //create img for the edit feature
+      let editIcon = document.createElement("img");
+      editIcon.id = todo.id;
+      editIcon.setAttribute("src", "edit-24px.svg");
+      editIcon.addEventListener("click", editTodo);
+      //append it inside its own td
+      let editTd = document.createElement("td");
+      editTd.appendChild(editIcon);
+      if (todo.completed) {
+        checkbox.checked = true;
+        crossOutTodo(text);
+      }
+      //creating the li element
+      tr.appendChild(checkbox);
+      tr.appendChild(text);
+      tr.appendChild(date);
+      tr.appendChild(editTd);
+      tr.appendChild(deleteTd);
+      qs("#todoList").appendChild(tr);
+    });
+  }
   //done and undone texts
   getDoneCount();
-  _pending = false;
 }

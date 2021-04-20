@@ -5,15 +5,20 @@ import {
   updateTodo,
   pending,
   completed,
+  displayAll,
 } from "./utilities.js";
 import { qs, clearInputs } from "./view.js";
+
+let _pending = false;
+let _completed = false;
 
 let todos = [];
 todos = getFromLS("todos");
 console.log(todos);
+
 if (todos != null) {
-  listTodos(todos);
-  qs("#all").classList.add("fade");
+  displayAll();
+  qs("#all").disabled = true;
 } else {
   todos = [];
   saveToLS("todos", todos);
@@ -24,8 +29,18 @@ qs("#addT").addEventListener("click", () => {
   if (qs("#todoText").value.length > 0) {
     qs("#todoText").classList.remove("inputAlert");
     addNewTodo();
-    clearInputs();
+    todos = getFromLS("todos");
+    if (_pending) {
+      pending(todos);
+      //_pending = false;
+    } else if (_completed) {
+      completed(todos);
+      //_completed = false;
+    } else {
+      displayAll();
+    }
   } else qs("#todoText").classList.add("inputAlert");
+  clearInputs();
 });
 
 //updateTodo()
@@ -33,6 +48,16 @@ qs("#save").addEventListener("click", () => {
   if (qs("#edText").value.length > 0) {
     qs("#edText").classList.remove("inputAlert");
     updateTodo();
+    todos = getFromLS("todos");
+    if (_pending) {
+      pending(todos);
+      qs("#pending").disabled = true;
+    } else if (_completed) {
+      completed(todos);
+      qs("#completed").disabled = true;
+    } else {
+      listTodos(todos);
+    }
   } else qs("#edText").classList.add("inputAlert");
 });
 
@@ -40,22 +65,26 @@ qs("#save").addEventListener("click", () => {
 qs("#pending").addEventListener("click", () => {
   todos = getFromLS("todos");
   pending(todos);
-  qs("#pending").classList.add("fade");
-  qs("#addForm").classList.add("hide");
+  qs("#pending").disabled = true;
+  //qs("#addForm").classList.add("hide");
+  _pending = true;
+  _completed = false;
 });
 
 //completed todos
 qs("#completed").addEventListener("click", () => {
   todos = getFromLS("todos");
   completed(todos);
-  qs("#completed").classList.add("fade");
-  qs("#addForm").classList.add("hide");
+  qs("#completed").disabled = true;
+  //qs("#addForm").classList.add("hide");
+  _completed = true;
+  _pending = false;
 });
 
 //all todos
 qs("#all").addEventListener("click", () => {
-  todos = getFromLS("todos");
-  listTodos(todos);
-  qs("#all").classList.add("fade");
+  _completed = false;
+  _pending = false;
+  displayAll();
   qs("#addForm").classList.remove("hide");
 });
