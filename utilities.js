@@ -42,8 +42,8 @@ function inputChecked(e) {
   } else {
     listTodos(todos);
   }
-  console.log("pending: " + _pending);
-  console.log("completed: " + _completed);
+  //console.log("pending: " + _pending);
+  //console.log("completed: " + _completed);
   qs("#all").disabled = true;
 }
 
@@ -122,8 +122,8 @@ function deleteTodo(e) {
   } else {
     listTodos(todos);
   }
-  console.log("pending: " + _pending);
-  console.log("completed: " + _completed);
+  //console.log("pending: " + _pending);
+  //console.log("completed: " + _completed);
 }
 
 function filtering(done, unDone, todos) {
@@ -141,9 +141,10 @@ function filtering(done, unDone, todos) {
     qs("#pending").disabled = false;
     qs("#completed").disabled = false;
   }
-  if (done.length < 1) qs("#pending").disabled = false;
-
-  if (unDone.length < 1) qs("#completed").disabled = false;
+  if (done.length < 1 && _completed) qs("#pending").disabled = false;
+  if (unDone.length < 1 && _pending) qs("#completed").disabled = false;
+  console.log("pending: " + _pending);
+  console.log("completed: " + _completed);
 }
 
 export function pending(todos) {
@@ -151,6 +152,7 @@ export function pending(todos) {
   _pending = true;
   _completed = false;
   listTodos(pending);
+  qs("#pending").disabled = true;
 }
 
 export function completed(todos) {
@@ -158,6 +160,7 @@ export function completed(todos) {
   _completed = true;
   _pending = false;
   listTodos(completed);
+  qs("#completed").disabled = true;
 }
 
 export function displayAll() {
@@ -168,8 +171,8 @@ export function displayAll() {
   todos = getFromLS("todos");
   listTodos(todos);
   qs("#all").disabled = true;
-  qs("#pending").disabled = true;
-  qs("#completed").disabled = true;
+  //console.log("pending: " + _pending);
+  //console.log("completed: " + _completed);
 }
 export function listTodos(todos) {
   // clear the table

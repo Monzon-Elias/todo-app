@@ -18,7 +18,6 @@ console.log(todos);
 
 if (todos != null) {
   displayAll();
-  qs("#all").disabled = true;
 } else {
   todos = [];
   saveToLS("todos", todos);
@@ -32,10 +31,8 @@ qs("#addT").addEventListener("click", () => {
     todos = getFromLS("todos");
     if (_pending) {
       pending(todos);
-      //_pending = false;
     } else if (_completed) {
       completed(todos);
-      //_completed = false;
     } else {
       displayAll();
     }
@@ -51,10 +48,8 @@ qs("#save").addEventListener("click", () => {
     todos = getFromLS("todos");
     if (_pending) {
       pending(todos);
-      qs("#pending").disabled = true;
     } else if (_completed) {
       completed(todos);
-      qs("#completed").disabled = true;
     } else {
       listTodos(todos);
     }
