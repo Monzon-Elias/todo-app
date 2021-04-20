@@ -143,8 +143,8 @@ function filtering(done, unDone, todos) {
   }
   if (done.length < 1 && _completed) qs("#pending").disabled = false;
   if (unDone.length < 1 && _pending) qs("#completed").disabled = false;
-  console.log("pending: " + _pending);
-  console.log("completed: " + _completed);
+  //console.log("pending: " + _pending);
+  //console.log("completed: " + _completed);
 }
 
 export function pending(todos) {
@@ -192,8 +192,6 @@ export function listTodos(todos) {
       //create td for the todo date
       let date = document.createElement("td");
       date.textContent = todo.todoDate;
-      //disable the checkbox if pending or completed methods get activated
-      //if (_pending) checkbox.disabled = true;
       //add event listener for the checkbox and reference inputChecked method on it
       checkbox.addEventListener("click", inputChecked);
       //create img for the delete feature

@@ -1,27 +1,31 @@
 body {
   margin: 2vw 5vw;
+  text-align: center;
 }
 
 .completed {
   text-decoration: line-through;
 }
 
+.container,
+#filtering {
+  display: flex;
+  justify-content: center;
+}
+
 .hide {
   display: none;
 }
-.fade {
-  opacity: 0.3;
-}
+
 .inputAlert {
   border: 1px solid red;
 }
+
 #filtering {
   margin-top: 0.5rem;
-  max-width: fit-content;
-  column-count: 3;
 }
-#filtering button {
-  display: block;
+#filtering div {
+  margin-right: 1rem;
 }
 
 thead {
